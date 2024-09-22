@@ -92,6 +92,8 @@ namespace agility {
     let multiplayer: boolean = false
 
     //% block="add course with name $name steps $course"
+    //% course.shadow="lists_create_with"
+    //% course.defl="screen_image_picker"
     //% group="Courses"
     export function addCourse(name: string, course: Image[]): void {
         if (needsInit) {
