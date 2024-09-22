@@ -1,3 +1,11 @@
+function startNewRound() {
+    if (agility.getCurrRound() == agility.numCourses()) {
+        game.gameOver(true)
+    } else {
+        agility.startNewRound()
+    }
+}
+
 controller.up.onEvent(ControllerButtonEvent.Pressed, function () {
     agility.addPlayerStep(1, assets_agility.upArrowSmall)
 })
@@ -44,7 +52,14 @@ controller.player1.onButtonEvent(ControllerButton.A, ControllerButtonEvent.Press
         game.splash("Good work, Player 1!")
         startNewRound()
     } else {
-        music.play(music.melodyPlayable(music.buzzer), music.PlaybackMode.InBackground)
+        // Could also play buzzer.
+        agility.playIncorrectPath()
+        if (!agility.playersHaveLife()) {
+            info.stopCountdown()
+            game.splash("No lives left!")
+            agility.runCourse()
+            startNewRound()
+        }
     }
 })
 controller.player2.onButtonEvent(ControllerButton.A, ControllerButtonEvent.Pressed, function () {
@@ -54,7 +69,13 @@ controller.player2.onButtonEvent(ControllerButton.A, ControllerButtonEvent.Press
         game.splash("Good work, Player 2!")
         startNewRound()
     } else {
-        music.play(music.melodyPlayable(music.buzzer), music.PlaybackMode.InBackground)
+        agility.playIncorrectPath()
+        if (!agility.playersHaveLife()) {
+            info.stopCountdown()
+            game.splash("No lives left!")
+            agility.runCourse()
+            startNewRound()
+        }
     }
 })
 controller.player3.onButtonEvent(ControllerButton.A, ControllerButtonEvent.Pressed, function () {
@@ -64,7 +85,13 @@ controller.player3.onButtonEvent(ControllerButton.A, ControllerButtonEvent.Press
         game.splash("Good work, Player 3!")
         startNewRound()
     } else {
-        music.play(music.melodyPlayable(music.buzzer), music.PlaybackMode.InBackground)
+        agility.playIncorrectPath()
+        if (!agility.playersHaveLife()) {
+            info.stopCountdown()
+            game.splash("No lives left!")
+            agility.runCourse()
+            startNewRound()
+        }
     }
 })
 controller.player4.onButtonEvent(ControllerButton.A, ControllerButtonEvent.Pressed, function () {
@@ -74,7 +101,13 @@ controller.player4.onButtonEvent(ControllerButton.A, ControllerButtonEvent.Press
         game.splash("Good work, Player 4!")
         startNewRound()
     } else {
-        music.play(music.melodyPlayable(music.buzzer), music.PlaybackMode.InBackground)
+        agility.playIncorrectPath()
+        if (!agility.playersHaveLife()) {
+            info.stopCountdown()
+            game.splash("No lives left!")
+            agility.runCourse()
+            startNewRound()
+        }
     }
 })
 
@@ -90,13 +123,7 @@ controller.player3.onButtonEvent(ControllerButton.B, ControllerButtonEvent.Press
 controller.player4.onButtonEvent(ControllerButton.B, ControllerButtonEvent.Pressed, function () {
     agility.deletePlayerStep(4)
 })
-function startNewRound() {
-    if (agility.getCurrRound() == agility.numCourses()) {
-        game.gameOver(true)
-    } else {
-        agility.startNewRound()
-    }
-}
+
 let ROUNDS = 3
 let pattern: Image[] = []
 for (let index = 0; index < ROUNDS; index++) {
@@ -113,16 +140,14 @@ for (let index = 0; index < ROUNDS; index++) {
     }
     agility.addCourse("Random #" + agility.numCourses(), pattern)
 }
+agility.playGameStartup()
 scene.setBackgroundImage(assets_agility.field)
 game.showLongText("Use up, left, and right to create an algorithm that matches the course!\\n \\nPress A to check it.\\n \\nPress B to erase the last step.", DialogLayout.Full)
 let fbPlayer = sprites.create(assets_agility.footballer0, SpriteKind.Player)
 agility.setPlayerSprite(fbPlayer)
+agility.setMultiplayer(true)
 info.player1.setScore(0)
 info.player2.setScore(0)
 info.player3.setScore(0)
 info.player4.setScore(0)
-info.player1.setLife(3)
-info.player2.setLife(3)
-info.player3.setLife(3)
-info.player4.setLife(3)
 agility.startNewRound()

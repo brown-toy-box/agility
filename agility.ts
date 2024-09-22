@@ -15,7 +15,7 @@ info.onCountdownEnd(function () {
 })
 
 //% color=#AF7817 icon="\uf2f2"
-//% groups=['Players', 'Courses', 'Game', 'Scene',]
+//% groups=['Players', 'Courses', 'Game', 'Scene', 'Sounds',]
 namespace agility {
     enum direction {
         up,
@@ -88,6 +88,8 @@ namespace agility {
     let startTicks: number = 0
     let stopTicks: number = 0
     let timerLength: number = 30
+    let playerLives: number = 3
+    let multiplayer: boolean = false
 
     //% block="add course with name $name steps $course"
     //% group="Courses"
@@ -150,6 +152,9 @@ namespace agility {
         if (player < 1 || player > 4 || img === null || img === undefined) {
             return
         }
+        if (!playerHasLives(player)) {
+            return
+        }
         playerAlgos[player].push(img)
         showPlayerAlgo(player)
     }
@@ -159,6 +164,9 @@ namespace agility {
     //% group="Players"
     export function checkPlayerAlgo(player: number): boolean {
         if (player < 1 || player > 4) {
+            return false
+        }
+        if (!playerHasLives(player)) {
             return false
         }
         if (!checkPlayerAlgoSteps(player)) {
@@ -191,6 +199,7 @@ namespace agility {
                 index++
             }
             playerAlgos[player] = []
+            changePlayerLife(player, -1)
             return false
         } else {
             info.stopCountdown()
@@ -206,8 +215,14 @@ namespace agility {
         if (player < 1 || player > 4) {
             return
         }
+        if (!playerHasLives(player)) {
+            return
+        }
+        if (playerAlgos[player].length == 0) {
+            return
+        }
         playerAlgos[player].pop()
-        showPlayerAlgo(1)
+        showPlayerAlgo(player)
     }
 
     //% block="draw current course"
@@ -310,6 +325,36 @@ namespace agility {
         return courses.length
     }
 
+    //% block="players have life?"
+    //% group="Game"
+    export function playersHaveLife(): boolean {
+        if (multiplayer) {
+            return info.player1.hasLife() ||
+                info.player2.hasLife() ||
+                info.player3.hasLife() ||
+                info.player4.hasLife()
+        }
+        return info.hasLife()
+    }
+
+    //% block
+    //% group="Sounds"
+    export function playGameStartup(): void {
+        music.play(
+            music.createSoundEffect(WaveShape.Sine, 2000, 0, 1023, 0, 500, SoundExpressionEffect.None, InterpolationCurve.Linear),
+            music.PlaybackMode.UntilDone
+        )
+    }
+
+    //% block
+    //% group="Sounds"
+    export function playIncorrectPath(): void {
+        music.play(
+            music.createSoundEffect(WaveShape.Noise, 3228, 1534, 255, 0, 1000, SoundExpressionEffect.None, InterpolationCurve.Linear),
+            music.PlaybackMode.InBackground
+        )
+    }
+
     //% block
     //% group="Courses"
     export function runCourse(): void {
@@ -347,6 +392,21 @@ namespace agility {
     //% group="Scene"
     export function setLastStepImage(img: Image): void {
         lastStepImg = img
+    }
+
+    //% block
+    //% on.defl=false
+    //% on.shadow=toggleOnOff
+    //% group="Game"
+    export function setMultiplayer(on: boolean): void {
+        multiplayer = on
+    }
+
+    //% block="set player starting lives to $lives"
+    //% lives.defl=3
+    //% group="Game"
+    export function setPlayerLives(lives: number): void {
+        playerLives = lives
     }
 
     //% block="set player sprite to $sprite"
@@ -390,6 +450,12 @@ namespace agility {
         drawCourse()
         for (let id: number = 1; id <= 4; id++) {
             playerAlgos[id] = []
+            if (multiplayer) {
+                setPlayerLife(id, playerLives)
+            }
+        }
+        if (!multiplayer) {
+            info.setLife(playerLives)
         }
         game.splash("Round " + (currRound + 1) + ": " + currCourse.name,
             "Course has " + currCourse.steps.length + " steps.")
@@ -435,6 +501,26 @@ namespace agility {
         needsInit = false
     }
 
+    function changePlayerLife(player: number, delta: number): void {
+        switch (player) {
+            case 1:
+                info.player1.changeLifeBy(delta)
+                break
+
+            case 2:
+                info.player2.changeLifeBy(delta)
+                break
+
+            case 3:
+                info.player3.changeLifeBy(delta)
+                break
+
+            case 4:
+                info.player4.changeLifeBy(delta)
+                break
+        }
+    }
+
     function checkPlayerAlgoSteps(player: number): boolean {
         if (player < 1 || player > 4) {
             return false
@@ -468,6 +554,68 @@ namespace agility {
             }
         }
         return null
+    }
+
+    function getPlayerLife(player: number): number {
+        switch (player) {
+            case 1:
+                return info.player1.life()
+                break
+
+            case 2:
+                return info.player2.life()
+                break
+
+            case 3:
+                return info.player3.life()
+                break
+
+            case 4:
+                return info.player4.life()
+                break
+        }
+        return -1
+    }
+
+    function playerHasLives(player: number): boolean {
+        switch (player) {
+            case 1:
+                return info.player1.hasLife()
+                break
+
+            case 2:
+                return info.player2.hasLife()
+                break
+
+            case 3:
+                return info.player3.hasLife()
+                break
+
+            case 4:
+                return info.player4.hasLife()
+                break
+        }
+        return false
+    }
+
+    function setPlayerLife(player: number, value: number): void {
+        switch (player) {
+            case 1:
+                info.player1.setLife(value)
+                break
+
+            case 2:
+                info.player2.setLife(value)
+                break
+
+            case 3:
+                info.player3.setLife(value)
+                break
+
+            case 4:
+                info.player4.setLife(value)
+                break
+        }
     }
 
     function showPlayerAlgo(player: number): void {
