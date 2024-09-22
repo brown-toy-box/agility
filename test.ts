@@ -1,5 +1,27 @@
-function startNewRound() {
-    if (agility.getCurrRound() == agility.numCourses()) {
+let numberOfRounds: number = 3
+function loadCourses() {
+    let courses: number = 3
+    let pattern: Image[] = []
+    for (let index = 0; index < courses; index++) {
+        pattern = []
+        for (let index = 0; index < 6; index++) {
+            let tile: number = randint(0, 2)
+            if (tile == 0) {
+                pattern.push(assets_agility.upArrowSmall)
+            } else if (tile == 1) {
+                pattern.push(assets_agility.leftArrowSmall)
+            } else {
+                pattern.push(assets_agility.rightArrowSmall)
+            }
+        }
+        agility.addCourse("Random #" + agility.numCourses(), pattern)
+    }
+}
+
+function finishRound(message: string) {
+    game.splash(message)
+    agility.runCourse()
+    if (agility.getCurrRound() == numberOfRounds) {
         game.gameOver(true)
     } else {
         agility.startNewRound()
@@ -48,66 +70,34 @@ controller.player4.onButtonEvent(ControllerButton.Right, ControllerButtonEvent.P
 controller.player1.onButtonEvent(ControllerButton.A, ControllerButtonEvent.Pressed, function () {
     if (agility.checkPlayerAlgo(1)) {
         info.player1.changeScoreBy(agility.getScore())
-        agility.runCourse()
-        game.splash("Good work, Player 1!")
-        startNewRound()
+        finishRound("Good work, Player 1!")
     } else {
         // Could also play buzzer.
         agility.playIncorrectPath()
-        if (!agility.playersHaveLife()) {
-            info.stopCountdown()
-            game.splash("No lives left!")
-            agility.runCourse()
-            startNewRound()
-        }
     }
 })
 controller.player2.onButtonEvent(ControllerButton.A, ControllerButtonEvent.Pressed, function () {
     if (agility.checkPlayerAlgo(2)) {
         info.player2.changeScoreBy(agility.getScore())
-        agility.runCourse()
-        game.splash("Good work, Player 2!")
-        startNewRound()
+        finishRound("Good work, Player 2!")
     } else {
         agility.playIncorrectPath()
-        if (!agility.playersHaveLife()) {
-            info.stopCountdown()
-            game.splash("No lives left!")
-            agility.runCourse()
-            startNewRound()
-        }
     }
 })
 controller.player3.onButtonEvent(ControllerButton.A, ControllerButtonEvent.Pressed, function () {
     if (agility.checkPlayerAlgo(3)) {
         info.player3.changeScoreBy(agility.getScore())
-        agility.runCourse()
-        game.splash("Good work, Player 3!")
-        startNewRound()
+        finishRound("Good work, Player 3!")
     } else {
         agility.playIncorrectPath()
-        if (!agility.playersHaveLife()) {
-            info.stopCountdown()
-            game.splash("No lives left!")
-            agility.runCourse()
-            startNewRound()
-        }
     }
 })
 controller.player4.onButtonEvent(ControllerButton.A, ControllerButtonEvent.Pressed, function () {
     if (agility.checkPlayerAlgo(4)) {
         info.player4.changeScoreBy(agility.getScore())
-        agility.runCourse()
-        game.splash("Good work, Player 4!")
-        startNewRound()
+        finishRound("Good work, Player 4!")
     } else {
         agility.playIncorrectPath()
-        if (!agility.playersHaveLife()) {
-            info.stopCountdown()
-            game.splash("No lives left!")
-            agility.runCourse()
-            startNewRound()
-        }
     }
 })
 
@@ -124,22 +114,31 @@ controller.player4.onButtonEvent(ControllerButton.B, ControllerButtonEvent.Press
     agility.deletePlayerStep(4)
 })
 
-let ROUNDS = 3
-let pattern: Image[] = []
-for (let index = 0; index < ROUNDS; index++) {
-    pattern = []
-    for (let index = 0; index < 6; index++) {
-        let tile: number = randint(0, 2)
-        if (tile == 0) {
-            pattern.push(assets_agility.upArrowSmall)
-        } else if (tile == 1) {
-            pattern.push(assets_agility.leftArrowSmall)
-        } else {
-            pattern.push(assets_agility.rightArrowSmall)
-        }
+info.player1.onLifeZero(function() {
+    if (!agility.playersHaveLife()) {
+        finishRound("No lives left!")
     }
-    agility.addCourse("Random #" + agility.numCourses(), pattern)
-}
+})
+info.player2.onLifeZero(function () {
+    if (!agility.playersHaveLife()) {
+        finishRound("No lives left!")
+    }
+})
+info.player3.onLifeZero(function () {
+    if (!agility.playersHaveLife()) {
+        finishRound("No lives left!")
+    }
+})
+info.player4.onLifeZero(function () {
+    if (!agility.playersHaveLife()) {
+        finishRound("No lives left!")
+    }
+})
+
+info.onCountdownEnd(function() {
+    finishRound("Out of time!")
+})
+
 agility.playGameStartup()
 scene.setBackgroundImage(assets_agility.field)
 game.showLongText("Use up, left, and right to create an algorithm that matches the course!\\n \\nPress A to check it.\\n \\nPress B to erase the last step.", DialogLayout.Full)
@@ -150,5 +149,7 @@ info.player1.setScore(0)
 info.player2.setScore(0)
 info.player3.setScore(0)
 info.player4.setScore(0)
+loadCourses()
 agility.randomizeCourses(true)
+agility.setTimerLength(5)
 agility.startNewRound()
