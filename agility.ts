@@ -358,6 +358,25 @@ namespace agility {
     }
 
     //% block
+    //% on.defl=false
+    //% on.shadow=toggleOnOff
+    //% group="Courses"
+    export function randomizeCourses(on: boolean): void {
+        if (on) {
+            let count: number = courseOrder.length
+            for (let i: number = 0; i < count; i++) {
+                let j: number = randint(0, count - 1)
+                swapCourses(i, j)
+            }
+        } else {
+            courseOrder = []
+            for (let i: number = 0; i < courses.length; i++) {
+                courseOrder.push(i)
+            }
+        }
+    }
+
+    //% block
     //% group="Courses"
     export function runCourse(): void {
         let follow: Sprite = sprites.create(img`.`, SpriteKind.CourseSteps)
@@ -635,5 +654,14 @@ namespace agility {
             s.setPosition(x, y)
             x += i.width
         }
+    }
+
+    function swapCourses(id1: number, id2: number): void {
+        if (id1 == id2) {
+            return
+        }
+        let t: number = courseOrder[id1]
+        courseOrder[id1] = courseOrder[id2]
+        courseOrder[id2] = t
     }
 }
