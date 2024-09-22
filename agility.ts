@@ -90,6 +90,8 @@ namespace agility {
     let timerLength: number = 30
     let playerLives: number = 3
     let multiplayer: boolean = false
+    let asyncRunDoneHandler: () => void = null
+    let runningCourse: boolean = false
 
     //% block="add course with name $name steps $course"
     //% course.shadow="lists_create_with"
@@ -157,6 +159,9 @@ namespace agility {
         if (!playerHasLives(player)) {
             return
         }
+        if (runningCourse) {
+            return
+        }
         playerAlgos[player].push(img)
         showPlayerAlgo(player)
     }
@@ -169,6 +174,9 @@ namespace agility {
             return false
         }
         if (!playerHasLives(player)) {
+            return false
+        }
+        if (runningCourse) {
             return false
         }
         if (!checkPlayerAlgoSteps(player)) {
@@ -218,6 +226,9 @@ namespace agility {
             return
         }
         if (!playerHasLives(player)) {
+            return
+        }
+        if (runningCourse) {
             return
         }
         if (playerAlgos[player].length == 0) {
@@ -327,6 +338,12 @@ namespace agility {
         return courses.length
     }
 
+    //% block
+    //% group="Scene"
+    export function onCourseRunDone(handler: () => void) {
+        asyncRunDoneHandler = handler
+    }
+
     //% block="players have life?"
     //% group="Game"
     export function playersHaveLife(): boolean {
@@ -378,7 +395,9 @@ namespace agility {
 
     //% block
     //% group="Courses"
+    //% deprecated=true
     export function runCourse(): void {
+        runningCourse = true
         let follow: Sprite = sprites.create(img`.`, SpriteKind.CourseSteps)
         follow.setPosition(fbPlayer.x, fbPlayer.y)
         follow.z = -1
@@ -406,6 +425,7 @@ namespace agility {
             pause(fbStepPause)
         }
         fbPlayer.follow(null)
+        runningCourse = false
     }
 
     //% block="set image for last step to $img"
@@ -451,6 +471,17 @@ namespace agility {
     //% group="Game"
     export function setTimerLength(seconds: number): void {
         timerLength = seconds
+    }
+
+    //% block
+    //% group="Scene"
+    export function startCourseRun(): void {
+        timer.background(() => {
+            runCourse()
+            if (asyncRunDoneHandler !== null) {
+                asyncRunDoneHandler()
+            }
+        })
     }
 
     //% block

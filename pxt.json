@@ -4,7 +4,8 @@
     "description": "",
     "dependencies": {
         "device": "*",
-        "assets_agility": "github:brown-toy-box/assets_agility#v1.0.1"
+        "assets_agility": "github:brown-toy-box/assets_agility#v1.0.1",
+        "Timers": "github:microsoft/arcade-timers#v1.1.0"
     },
     "files": [
         "README.md",

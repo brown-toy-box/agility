@@ -20,13 +20,16 @@ function loadCourses() {
 
 function finishRound(message: string) {
     game.splash(message)
-    agility.runCourse()
+    agility.startCourseRun()
+}
+
+agility.onCourseRunDone(function() {
     if (agility.getCurrRound() == numberOfRounds) {
         game.gameOver(true)
     } else {
         agility.startNewRound()
     }
-}
+})
 
 controller.up.onEvent(ControllerButtonEvent.Pressed, function () {
     agility.addPlayerStep(1, assets_agility.upArrowSmall)
