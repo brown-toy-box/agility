@@ -92,6 +92,7 @@ namespace agility {
     let multiplayer: boolean = false
     let asyncRunDoneHandler: () => void = null
     let runningCourse: boolean = false
+    let randomCourseCount: number = 0
 
     //% block="add course with name $name steps $course"
     //% course.shadow="lists_create_with"
@@ -164,6 +165,20 @@ namespace agility {
         }
         playerAlgos[player].push(img)
         showPlayerAlgo(player)
+    }
+
+    //% block="add random course with $steps steps"
+    //% group="Courses"
+    export function addRandomCourse(steps: number): void {
+        if (steps < 1) {
+            return
+        }
+        randomCourseCount++
+        let stepImages: Image[] = []
+        for (let i: number = 0; i < steps; i++) {
+            stepImages.push(DIRECTIONS[randint(0, 2)].images[0])
+        }
+        addCourse("Random course #" + randomCourseCount, stepImages)
     }
 
     //% block="check algorithm for player $player"
@@ -239,7 +254,7 @@ namespace agility {
     }
 
     //% block="draw current course"
-    //% group="Courses"
+    //% group="Scene"
     export function drawCourse(): void {
         if (needsInit) {
             init()
