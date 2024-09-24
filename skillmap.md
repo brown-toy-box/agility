@@ -55,7 +55,7 @@
 ### part-5
 
 * name: Intermediate Part 1
-* description: Add strategy and difficulty to the game.
+* description: Get your project ready to run multiple rounds.
 * type: tutorial
 * next: part-6
 * url: https://github.com/brown-toy-box/agility/tutorial-part-5
