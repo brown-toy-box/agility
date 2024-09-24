@@ -21,6 +21,7 @@ namespace agility {
         up,
         left,
         right,
+        down,
     }
 
     interface Course {
@@ -147,6 +148,16 @@ namespace agility {
             init()
         }
         DIRECTIONS[direction.up].images.push(img)
+    }
+
+    //% block
+    //% img.shadow=screen_image_picker
+    //% group="Scene"
+    export function addImageDown(img: Image): void {
+        if (needsInit) {
+            init()
+        }
+        DIRECTIONS[direction.down].images.push(img)
     }
 
     //% block="add step $img for player $player"
@@ -279,6 +290,10 @@ namespace agility {
 
                 case direction.right:
                     currX += stepSpriteDelta
+                    break
+
+                case direction.down:
+                    currY += stepSpriteDelta
                     break
             }
 
@@ -436,6 +451,10 @@ namespace agility {
                 case direction.right:
                     follow.x += stepSpriteDelta
                     break
+
+                case direction.down:
+                    follow.y += stepSpriteDelta
+                    break
             }
             pause(fbStepPause)
         }
@@ -558,6 +577,11 @@ namespace agility {
                 assets_agility.rightArrowSmall,
                 assets_agility.rightArrowLarge,
             ],
+        })
+        DIRECTIONS.push({
+            dir: direction.down,
+            name: "Down",
+            images: [],
         })
 
         playerAlgos.push(null) // Do not use player ID 0

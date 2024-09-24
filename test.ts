@@ -11,11 +11,30 @@ function loadCourses() {
             } else if (tile == 1) {
                 pattern.push(assets_agility.leftArrowSmall)
             } else {
-                pattern.push(assets_agility.rightArrowSmall)
+                pattern.push(assets_agility.upArrowSmall)
             }
         }
         agility.addCourse("Random #" + agility.numCourses(), pattern)
     }
+    pattern = []
+    pattern.push(assets_agility.upArrowSmall)
+    pattern.push(assets_agility.upArrowSmall)
+    pattern.push(assets_agility.rightArrowSmall)
+    pattern.push(assets_agility.rightArrowSmall)
+    pattern.push(img`
+        . . . . 2 . . . .
+        . . . . 2 . . . .
+        . . . . 2 . . . .
+        . . . . 2 . . . .
+        2 . . . 2 . . . 2
+        . 2 . . 2 . . 2 .
+        . . 2 . 2 . 2 . .
+        . . . 2 2 2 . . .
+        . . . . 2 . . . .
+    `)
+    pattern.push(assets_agility.rightArrowSmall)
+    pattern.push(assets_agility.rightArrowSmall)
+    agility.addCourse("Down!", pattern)
 }
 
 function finishRound(message: string) {
@@ -68,6 +87,20 @@ controller.player3.onButtonEvent(ControllerButton.Right, ControllerButtonEvent.P
 })
 controller.player4.onButtonEvent(ControllerButton.Right, ControllerButtonEvent.Pressed, function () {
     agility.addPlayerStep(4, assets_agility.rightArrowSmall)
+})
+
+controller.player1.onButtonEvent(ControllerButton.Down, ControllerButtonEvent.Pressed, () => {
+    agility.addPlayerStep(1, img`
+        . . . . 2 . . . .
+        . . . . 2 . . . .
+        . . . . 2 . . . .
+        . . . . 2 . . . .
+        2 . . . 2 . . . 2
+        . 2 . . 2 . . 2 .
+        . . 2 . 2 . 2 . .
+        . . . 2 2 2 . . .
+        . . . . 2 . . . .
+    `)
 })
 
 controller.player1.onButtonEvent(ControllerButton.A, ControllerButtonEvent.Pressed, function () {
@@ -142,6 +175,34 @@ info.onCountdownEnd(function() {
     finishRound("Out of time!")
 })
 
+agility.addImageDown(img`
+        . . . . 2 . . . .
+        . . . . 2 . . . .
+        . . . . 2 . . . .
+        . . . . 2 . . . .
+        2 . . . 2 . . . 2
+        . 2 . . 2 . . 2 .
+        . . 2 . 2 . 2 . .
+        . . . 2 2 2 . . .
+        . . . . 2 . . . .
+    `)
+agility.addImageDown(img`
+    . . . . . . . 2 . . . . . . .
+    . . . . . . . 2 . . . . . . .
+    . . . . . . . 2 . . . . . . .
+    . . . . . . . 2 . . . . . . .
+    . . . . . . . 2 . . . . . . .
+    . . . . . . . 2 . . . . . . .
+    . . . . . . . 2 . . . . . . .
+    2 . . . . . . 2 . . . . . . 2
+    . 2 . . . . . 2 . . . . . 2 .
+    . . 2 . . . . 2 . . . . 2 . .
+    . . . 2 . . . 2 . . . 2 . . .
+    . . . . 2 . . 2 . . 2 . . . .
+    . . . . . 2 . 2 . 2 . . . . .
+    . . . . . . 2 2 2 . . . . . .
+    . . . . . . . 2 . . . . . . .
+`)
 agility.playGameStartup()
 scene.setBackgroundImage(assets_agility.field)
 game.showLongText("Use up, left, and right to create an algorithm that matches the course!\\n \\nPress A to check it.\\n \\nPress B to erase the last step.", DialogLayout.Full)
