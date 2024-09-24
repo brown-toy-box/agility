@@ -18,7 +18,10 @@
         "tutorial-part-4.md",
         "skillmap.md",
         "tutorial-part-5.md",
-        "tutorial-part-6.md"
+        "tutorial-part-6.md",
+        "tutorial-part-7.md",
+        "tutorial-part-8.md",
+        "tutorial-part-9.md"
     ],
     "testFiles": [
         "test.ts"
